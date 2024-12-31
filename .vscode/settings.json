@@ -56,5 +56,5 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "Tanker Assignment.sln"
+    "dotnet.defaultSolution": "Tanker.sln"
 }

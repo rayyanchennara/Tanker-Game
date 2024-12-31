@@ -3,19 +3,20 @@ using UnityEngine;
 
 public class BarrelScript : MonoBehaviour
 {
-    float maxHitPoints = 10f;
+    float maxHitPoints = 20f;
     float currentHitPoints;
     float amount = 15f;
 
     [SerializeField] ParticleSystem smokeParticle;
-    [SerializeField] ParticleSystem blastingParticle;
+    [SerializeField] ParticleSystem blastParticle;
 
     [SerializeField] HealthBar healthBar;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         smokeParticle.Stop();
-        blastingParticle.Stop();
+        blastParticle.Stop();
+        Mathf.Clamp(currentHitPoints, 0, maxHitPoints);
         currentHitPoints = maxHitPoints;
     }
 
@@ -27,11 +28,12 @@ public class BarrelScript : MonoBehaviour
 
     public void DecreaseHitPoints()
     {
-        currentHitPoints -= 2f;
-        if(currentHitPoints == 0)
+        currentHitPoints -= 10f;
+        if(currentHitPoints <= 0)
         {
             smokeParticle.Play();
-            Destroy(gameObject,1.5f);
+            blastParticle.Play();
+            Destroy(gameObject,1f);
             healthBar.RestorHealth(amount);
         }
     }

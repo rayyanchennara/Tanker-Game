@@ -9,6 +9,8 @@ TagManager:
   - Two
   - Three
   - Four
+  - LastLine
+  - ParkingLine
   layers:
   - Default
   - TransparentFX

@@ -3,17 +3,18 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Mathematics;
 using Unity.VisualScripting;
+using UnityEditor.Analytics;
 using UnityEngine;
 using UnityEngine.AI;
 
 public class EnemyMover : MonoBehaviour
 {
-    float chasingDistance = 100f;
-    float distanceToTarget = Mathf.Infinity; 
-    float distanceToWayPoint = Mathf.Infinity; 
+    float chasingDistance = 250f;
+    float distanceToTarget = Mathf.Infinity;
+    float distanceToWayPoint = Mathf.Infinity;
     float rotationSpeed = 1f;
-    float range = 130f;
-    int amount = 5;
+    float range = 120f;
+    int amount = 2;
     int wayPointNum = 0;
 
     public List<GameObject> wayPoints = new List<GameObject>();
@@ -35,7 +36,7 @@ public class EnemyMover : MonoBehaviour
     {
         navMeshAgent = GetComponent<NavMeshAgent>();
 
-        foreach(Transform child in parentOfWayPoints.transform)
+        foreach (Transform child in parentOfWayPoints.transform)
         {
             wayPoints.Add(child.gameObject);
         }
@@ -46,7 +47,7 @@ public class EnemyMover : MonoBehaviour
     {
         distanceToWayPoint = Vector3.Distance(transform.position, wayPoints[wayPointNum].transform.position);
         distanceToTarget = Vector3.Distance(transform.position, target.transform.position);
-        
+
         ProcessToFollowTarget();
     }
 
@@ -57,22 +58,20 @@ public class EnemyMover : MonoBehaviour
         {
             isPatrolling = false;
             isProvoked = true;
-            // Debug.Log(isPatrolling +"," + isProvoked);
         }
 
         else if (distanceToTarget >= chasingDistance)
         {
             isProvoked = false;
-            // navMeshAgent.ResetPath();
             isPatrolling = true;
         }
- 
+
         if (isProvoked == true)
         {
             EngageWithPlayer();
         }
 
-        if(isPatrolling == true)
+        if (isPatrolling == true)
         {
             ProcessPatrolling();
         }
@@ -80,20 +79,19 @@ public class EnemyMover : MonoBehaviour
 
     private void ProcessPatrolling()
     {
-        navMeshAgent.SetDestination(wayPoints[wayPointNum].transform.position);
+
         faceToWayPoint();
-        if(distanceToWayPoint <= 80)
+        navMeshAgent.SetDestination(wayPoints[wayPointNum].transform.position);
+        if (distanceToWayPoint <= 80)
         {
-            if(wayPointNum < wayPoints.Count - 1)
-        {
-            Debug.Log(wayPointNum);
-            // faceToWayPoint();
-            wayPointNum++;
-        }
-        else
-        {
-            wayPointNum = 0;
-        }
+            if (wayPointNum < wayPoints.Count - 1)
+            {
+                wayPointNum++;
+            }
+            else
+            {
+                wayPointNum = 0;
+            }
         }
     }
 
@@ -156,7 +154,7 @@ public class EnemyMover : MonoBehaviour
             yield return new WaitForSeconds(1);
             canFire = true;
         }
-        
+
     }
 
     private void PlayMussleFlash()
@@ -178,5 +176,10 @@ public class EnemyMover : MonoBehaviour
 
             }
         }
+    }
+    
+    void OnCollisionEnter(Collision collision)
+    {
+        navMeshAgent.ResetPath();
     }
 }

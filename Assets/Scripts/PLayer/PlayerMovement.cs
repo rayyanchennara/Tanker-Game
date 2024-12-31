@@ -1,20 +1,29 @@
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class PlayerMovement : MonoBehaviour
 {
+    // GameObjects
+    [SerializeField] GameObject audioSourceTwoGameObject;
     float moveSpeed = 50f;
-    float rotateSpeed = 10f;
-    // [SerializeField] AudioClip tankerMovingAudio;
+    float rotateSpeed = 20f;
     [SerializeField] AudioClip tankerStartingSound;
-    [SerializeField] AudioClip collisionSound;
+    [SerializeField] AudioClip movingSound;
+    [SerializeField] AudioClip victorySound;
+    [SerializeField] GameOver gameOver;
 
+    // CASH
     AudioSource audioSource;
+    AudioSource audioSourceTwo;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        audioSourceTwo = audioSourceTwoGameObject.GetComponent<AudioSource>();
         audioSource = GetComponent<AudioSource>();
-        audioSource.PlayOneShot(tankerStartingSound);
+        audioSource.Stop();
+        audioSourceTwo.PlayOneShot(tankerStartingSound);
     }
 
     // Update is called once per frame
@@ -26,12 +35,11 @@ public class PlayerMovement : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        if (collision.transform.CompareTag("Obstacle"))
+        if (collision.transform.CompareTag("ParkingLine"))
         {
-            if(!audioSource.isPlaying)
-            {
-                audioSource.PlayOneShot(collisionSound);
-            }
+            audioSource.Stop();
+            audioSourceTwo.PlayOneShot(victorySound);
+            gameOver.WinWindowProcess();
         }
     }
 
@@ -40,18 +48,28 @@ public class PlayerMovement : MonoBehaviour
         // float mouseX = Input.GetAxis("Mouse X");
 
         // transform.Rotate(Vector3.up * mouseX * rotationSpeed * Time.deltaTime);
-        // if(Input.GetKey(KeyCode.H) && !audioSource.isPlaying)
-        // {
-        //     audioSource.PlayOneShot(tankerMovingAudio);
-        // }
         float yValue = Input.GetAxis("Horizontal") * rotateSpeed * Time.deltaTime;
         transform.Rotate(0, yValue, 0);
     }
 
     private void MovementProcess()
     {
+        if (Input.GetAxis("Vertical") > 0 || Input.GetAxis("Horizontal") > 0 || Input.GetAxis("Vertical") < 0 || Input.GetAxis("Horizontal") < 0)
+        {
+            if (!audioSource.isPlaying)
+            {
+                audioSource.PlayOneShot(movingSound);
+            }
+        }
+
+        else
+        {
+            audioSource.Stop();
+        }
+
         //float xValue = Input.GetAxis("Horizontal") * moveSpeed * Time.deltaTime;
         float zValue = Input.GetAxis("Vertical") * moveSpeed * Time.deltaTime;
         transform.Translate(0, 0, zValue);
     }
+
 }

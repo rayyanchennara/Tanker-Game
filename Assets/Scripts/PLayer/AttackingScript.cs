@@ -1,23 +1,28 @@
 using System;
 using System.Collections;
+using TMPro;
 using UnityEngine;
 
 public class AttackingScript : MonoBehaviour
 {
     [SerializeField] GameObject raySphere;  
+    [SerializeField] GameObject audioSourceObject;
     [SerializeField] ParticleSystem muzzleFlash;
     [SerializeField] AudioClip bombingSound;
-    [SerializeField] EnemyHealth enemyHealth;
-
     [SerializeField] GameObject hitEffects;
-    float range = 100f;
-    int amount = 2;
+    [SerializeField] GameObject hitEffectsForBarrel;
+    [SerializeField] TextMeshProUGUI loadingText;
+    float range = 115f;
+    int amount = 250;
+
+    bool isShoot = true;
 
     AudioSource audioSource;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        audioSource = GetComponent<AudioSource>();
+        loadingText.enabled = false;
+        audioSource = audioSourceObject.GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -28,7 +33,7 @@ public class AttackingScript : MonoBehaviour
 
     private void FiringProcess()
     {
-        if (Input.GetMouseButton(0))
+        if (Input.GetButtonDown("Fire1") && isShoot == true)
         {
             StartCoroutine(Bombing());
         }
@@ -36,10 +41,14 @@ public class AttackingScript : MonoBehaviour
 
     IEnumerator Bombing()
     {
+        isShoot = false;
         PlayBombingSound();
         RayCastProcess();
         PlayMussleFlash();
-        yield return new WaitForSeconds(1);
+        loadingText.enabled = true;
+        yield return new WaitForSeconds(2f);
+        isShoot = true;
+        loadingText.enabled = false;
     }
 
     private void PlayBombingSound()
@@ -57,19 +66,40 @@ public class AttackingScript : MonoBehaviour
         RaycastHit hit;
         if(Physics.Raycast(raySphere.transform.position, raySphere.transform.forward, out hit, range))
         {
-            EnemyMover enemyMover = hit.transform.GetComponent<EnemyMover>();
+            EnemyHealthOne enemyHealthOne = hit.transform.GetComponent<EnemyHealthOne>();
+            EnemyHealthTwo enemyHealthTwo = hit.transform.GetComponent<EnemyHealthTwo>();
+            EnemyHealthThree enemyHealthThree = hit.transform.GetComponent<EnemyHealthThree>();
             BarrelScript barrelScript = hit.transform.GetComponent<BarrelScript>();
-            if(enemyMover != null)
+            if(enemyHealthOne != null)
             {
                 CreatHitEffects(hit);
-                enemyHealth.DecreaseHealth(amount);
+                enemyHealthOne.DecreaseHealth(amount);
+            }
+
+            else if(enemyHealthTwo != null)
+            {
+                CreatHitEffects(hit);
+                enemyHealthTwo.DecreaseHealth(amount);
+            }
+
+            else if(enemyHealthThree != null)
+            {
+                CreatHitEffects(hit);
+                enemyHealthThree.DecreaseHealth(amount);
             }
 
             else if(barrelScript != null)
             {
+                CreateHitEffectsOnBarrel(hit);
                 barrelScript.DecreaseHitPoints();
             }
         }
+    }
+
+    private void CreateHitEffectsOnBarrel(RaycastHit hit)
+    {
+        GameObject effect = Instantiate(hitEffectsForBarrel, hit.point, Quaternion.LookRotation(hit.normal));
+        Destroy(effect,1);
     }
 
     private void CreatHitEffects(RaycastHit hit)

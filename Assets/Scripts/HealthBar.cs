@@ -34,7 +34,6 @@ public class HealthBar : MonoBehaviour
 
         if(fillB > hFraction)
         {
-            Debug.Log(health);
             BackHealthBar.color = Color.red;
             forntHealthBar.fillAmount = hFraction;
             lerpTimer += Time.deltaTime;

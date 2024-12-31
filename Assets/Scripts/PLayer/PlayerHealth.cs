@@ -1,17 +1,22 @@
 using System;
 using UnityEngine;
 
-public class EnemyHealth : MonoBehaviour
+public class PlayerHealth : MonoBehaviour
 {
-    int currentHealth;
     int maxHealth = 100;
-
+    int currentHealth;
+    
+    [SerializeField] GameObject audioSourceObject;
+    [SerializeField] AudioClip explosionAudio;
     [SerializeField] ParticleSystem explosionParticle;
-    [SerializeField] ScoreBord scoreBord;
+
     [SerializeField] GameOver gameOver;
+
+    AudioSource audioSource;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        audioSource = audioSourceObject.GetComponent<AudioSource>();
         explosionParticle.Stop();
         currentHealth = maxHealth;
     }
@@ -20,18 +25,12 @@ public class EnemyHealth : MonoBehaviour
     void Update()
     {
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
-        // UpdateHealthUI();
     }
 
-    private void UpdateHealthUI()
+    public void DecreaseHealth(int amount)
     {
-        if(currentHealth == 0)
-        {
-            explosionParticle.Play();
-            Destroy(gameObject,1);
-            scoreBord.IncreaseScore();
-            gameOver.DecreaseEnemy();
-        }
+        currentHealth -= amount;
+        UpdateHealthUI();
     }
 
     public void IncreaseHealth(int amount)
@@ -40,9 +39,14 @@ public class EnemyHealth : MonoBehaviour
         UpdateHealthUI();
     }
 
-    public void DecreaseHealth(int amount)
+    private void UpdateHealthUI()
     {
-        currentHealth -= amount;
-        UpdateHealthUI();
+        if(currentHealth <= 0)
+        {
+            audioSource.PlayOneShot(explosionAudio);
+            explosionParticle.Play();
+            Destroy(gameObject);
+            gameOver.GameOverWindow();
+        }
     }
 }
