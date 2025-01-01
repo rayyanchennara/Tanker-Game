@@ -3,9 +3,10 @@ using System.Collections;
 using TMPro;
 using UnityEngine;
 
-public class AttackingScript : MonoBehaviour
+public class PlayerAttack : MonoBehaviour
 {
-    [SerializeField] GameObject raySphere;  
+    [SerializeField] GameObject raySphere; 
+    [SerializeField] GameObject projectilePrefab; 
     [SerializeField] GameObject audioSourceObject;
     [SerializeField] ParticleSystem muzzleFlash;
     [SerializeField] AudioClip bombingSound;
@@ -13,6 +14,7 @@ public class AttackingScript : MonoBehaviour
     [SerializeField] GameObject hitEffectsForBarrel;
     [SerializeField] TextMeshProUGUI loadingText;
     float range = 115f;
+    // float projectileSpeed = 100f;
     int amount = 250;
 
     bool isShoot = true;
