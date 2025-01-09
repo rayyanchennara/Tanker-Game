@@ -8,14 +8,21 @@ using UnityEngine;
 
 public class IndicatorScript : MonoBehaviour
 {
-    [SerializeField] GameObject enemyParentObject;
-    [SerializeField] GameObject lastArrow;
-    [SerializeField] Transform target;
-    [SerializeField] Transform player;
-    [SerializeField] TextMeshProUGUI hintText;
-    GameObject nearestEnemy;
+    [Header("Variables")]
     float lowDistance;
     float rotationSpeed = 2f;
+
+    [Header("Game Objects")]
+    [SerializeField] GameObject enemyParentObject;
+    [SerializeField] GameObject lastArrow;
+    GameObject nearestEnemy;
+    [SerializeField] Transform target;
+    [SerializeField] Transform player;
+
+    [Header("Texts")]
+    [SerializeField] TextMeshProUGUI hintText;
+
+    [Header("Lists")]
     public List<GameObject> enemies = new List<GameObject>();
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created

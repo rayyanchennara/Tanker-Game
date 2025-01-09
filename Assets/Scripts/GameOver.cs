@@ -6,104 +6,93 @@ using UnityEngine.SceneManagement;
 
 public class GameOver : MonoBehaviour
 {
-    int enmies =3;
+    [Header("Variables")]
+    int enemies = 3; // Number of enemies
 
-    // GameObjects
-    [SerializeField] GameObject parkingSpce;
+    [Header("Game Objects")]
+    [SerializeField] GameObject parkingSpace; // Reference to the parking space GameObject
 
-    // Canvases
-    [SerializeField] Canvas gameOverCanvas;
-    [SerializeField] Canvas winCanvas;
-    [SerializeField] Canvas defualtCanvas;
+    [Header("Canvas")]
+    [SerializeField] Canvas gameOverCanvas; // Reference to the game over canvas
+    [SerializeField] Canvas winCanvas;      // Reference to the win canvas
+    [SerializeField] Canvas defaultCanvas;  // Reference to the default canvas
 
-    // Texts
-    [SerializeField] TextMeshProUGUI gameOverScoreText;
-    [SerializeField] TextMeshProUGUI winScoreText;
+    [Header("Texts")]
+    [SerializeField] TextMeshProUGUI gameOverScoreText; // Text for the game over score display
+    [SerializeField] TextMeshProUGUI winScoreText;      // Text for the win score display
 
+    [Header("Scripts")]
+    [SerializeField] EnemyMover enemyMoverOne;   // Reference to the first enemy's mover script
+    [SerializeField] EnemyMover enemyMoverTwo;   // Reference to the second enemy's mover script
+    [SerializeField] EnemyMover enemyMoverThree; // Reference to the third enemy's mover script
+    [SerializeField] PlayerMovement playerMovement; // Reference to the player's movement script
 
-    // Scripts
-    [SerializeField] EnemyMover enemyMoverOne;
-    [SerializeField] EnemyMover enemyMoverTwo;
-    [SerializeField] EnemyMover enemyMoverThree;
-    [SerializeField] PlayerMovement playerMovement;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        parkingSpce.SetActive(false);
-        gameOverCanvas.enabled = false;
-        winCanvas.enabled = false;
+        parkingSpace.SetActive(false); // Deactivate the parking space at the start
+        gameOverCanvas.enabled = false; // Disable the game over canvas at the start
+        winCanvas.enabled = false;      // Disable the win canvas at the start
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(enmies <= 0)
+        if (enemies <= 0) // Check if all enemies are defeated
         {
-            ParkingProcess();
+            ParkingProcess(); // Call the parking process function
         }
     }
 
     private void ParkingProcess()
     {
-        parkingSpce.SetActive(true);
+        parkingSpace.SetActive(true); // Activate the parking space
     }
 
-    public void UpdateScore(int score)
+    public void UpdateScore(int score) // Function to update the score display
     {
-        winScoreText.text = "Score:-" + score.ToString();
-        gameOverScoreText.text = "Score:-" + score.ToString();
+        winScoreText.text = "Score:-" + score.ToString();      // Update the win score text
+        gameOverScoreText.text = "Score:-" + score.ToString(); // Update the game over score text
     }
 
-    public void GameOverWindow()
+    public void GameOverWindow() // Function to display the game over window
     {
-        defualtCanvas.enabled = false;
-        gameOverCanvas.enabled = true;
+        defaultCanvas.enabled = false; // Disable the default canvas
+        gameOverCanvas.enabled = true; // Enable the game over canvas
+        Time.timeScale = 0f;          // Pause the game time
+
+        if (enemyMoverOne != null) // Check if the enemy mover script exists before disabling it
+        {
+            enemyMoverOne.enabled = false; // Disable the first enemy's movement
+        }
+        if (enemyMoverTwo != null) // Check if the enemy mover script exists before disabling it
+        {
+            enemyMoverTwo.enabled = false; // Disable the second enemy's movement
+        }
+        if (enemyMoverThree) // Check if the enemy mover script exists before disabling it
+        {
+            enemyMoverThree.enabled = false; // Disable the third enemy's movement
+        }
+    }
+
+    public void ReLoadScene() // Function to reload the current scene
+    {
+        Time.timeScale = 1f;          // Resume game time
+        SceneManager.LoadScene(0);    // Reload the scene (index 0)
+        defaultCanvas.enabled = true; // Enable the default canvas
+        gameOverCanvas.enabled = false; // Disable the game over canvas
+    }
+
+    public void DecreaseEnemy() // Function to decrement the enemy count
+    {
+        enemies--; // Decrement the enemy count
+    }
+
+    public void WinWindowProcess() // Function to display the win window
+    {
         Time.timeScale = 0f;
-        if(enemyMoverOne != null)
-        {
-            enemyMoverOne.enabled = false;
-        }
-        if(enemyMoverTwo != null)
-        {
-            enemyMoverTwo.enabled = false;
-        }
-        if(enemyMoverThree)
-        {
-            enemyMoverThree.enabled = false;
-        }
-    }
-
-    public void ReLoadScene()
-    {
-        Time.timeScale = 1f;
-        SceneManager.LoadScene(0);
-        // Time.timeScale = 1f;
-        defualtCanvas.enabled = true;
-        gameOverCanvas.enabled = false;
-        // if(enemyMoverOne != null)
-        // {
-        //     enemyMoverOne.enabled = true;
-        // }
-        // if(enemyMoverTwo != null)
-        // {
-        //     enemyMoverTwo.enabled = true;
-        // }
-        // if(enemyMoverThree)
-        // {
-        //     enemyMoverThree.enabled = true;
-        // }
-    }
-
-    public void DecreaseEnemy()
-    {
-        enmies--;
-    }
-
-    public void WinWindowProcess()
-    {
-        winCanvas.enabled = true;
-        defualtCanvas.enabled = false;
-        playerMovement.enabled = false;
-        // Time.timeScale = 0f;
+        playerMovement.enabled = false; // Disable the player's movement
+        winCanvas.enabled = true;      // Enable the win canvas
+        defaultCanvas.enabled = false; // Disable the default canvas
     }
 }
